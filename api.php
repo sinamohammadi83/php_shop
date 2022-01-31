@@ -4,8 +4,10 @@ $db = new PDO("mysql:host=localhost;dbname=php_shop","root","");
 $db->exec("SET NAMES utf8");
 $users = $db->query("SELECT * FROM users")->fetchAll(PDO::FETCH_OBJ);
 header('Content-Type: application/json; charset=utf-8');
+if(isset($_GET['users'])){
 echo json_encode([
     'data' => [
         'users' => $users
     ]
 ]);
+}
