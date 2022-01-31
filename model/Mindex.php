@@ -6,6 +6,12 @@ class index{
         $this->db=$db;
     }
 
+    public function like_count($user_id)
+    {
+        $sql=$this->db->query("SELECT * FROM likes WHERE user_id='$user_id'");
+        return count($sql->fetchAll(PDO::FETCH_OBJ));
+    }
+
     public function categories()
     {
         $sql=$this->db->query("SELECT * FROM categories WHERE category_id IS NULL");
@@ -22,17 +28,6 @@ class index{
     {
         $sql=$this->db->query("SELECT * FROM brands");
         return $sql->fetchAll(PDO::FETCH_OBJ);
-    }
-
-    public function check_permission($permission)
-    {
-        $sql=$this->db->query("SELECT * FROM permissions WHERE title='$permission'");
-        $getpermission = $sql->fetch(PDO::FETCH_OBJ);
-        $role = $this->getrole($_SESSION['user_id']);
-        $role_id = $role->id;
-        $permission_id = $getpermission->id;
-        $sqlPermissionsRoles=$this->db->query("SELECT * FROM permission_role WHERE role_id='$role_id' AND permission_id='$permission_id'");
-        return $sqlPermissionsRoles->fetch(PDO::FETCH_OBJ);
     }
 
     public function getrole($id)
@@ -70,11 +65,22 @@ class index{
         $subcategory=$sql->fetchAll(PDO::FETCH_OBJ);
         $pluck_sub=array_column($subcategory,'id');
         $imp_sub=implode(",",$pluck_sub);
-        $sql2 = $this->db->query("SELECT * FROM categories WHERE category_id IN ('$imp_sub')");
+        $sql2 = $this->db->query("SELECT * FROM categories WHERE category_id IN ($imp_sub)");
         $parentcategory=$sql2->fetchAll(PDO::FETCH_OBJ);
         $pluck_parent=array_column($parentcategory,'id');
         $imp_parent = implode(",",$pluck_parent);
         $sqlproduct = $this->db->query("SELECT * FROM products WHERE category_id IN ($category_id,$imp_sub,$imp_parent) AND is_published='1'");
         return $sqlproduct->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    public function show_category($id)
+    {
+        return $this->db->query("SELECT * FROM categories WHERE id='$id'")
+            ->fetch(PDO::FETCH_OBJ);
+    }
+
+    public function sliders()
+    {
+        return $sql3=$this->db->query("SELECT * FROM sliders")->fetchAll(PDO::FETCH_OBJ);
     }
 }

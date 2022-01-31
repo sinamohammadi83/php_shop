@@ -11,7 +11,7 @@ class Migration{
     public function users()
     {
         $this->db->query("
-            CREATE TABLE 
+            CREATE TABLE users 
         ");
     }
 }

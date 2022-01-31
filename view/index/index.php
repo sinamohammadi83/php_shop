@@ -372,9 +372,13 @@
                 <div id="content" class="col-sm-9">
                     <!-- Slideshow Start-->
                     <div class="slideshow single-slider owl-carousel">
-                        <div class="item"> <a href="#"><img class="img-responsive" src="public/image/slider/banner-1.jpg" alt="banner 1" /></a> </div>
-                        <div class="item"> <a href="#"><img class="img-responsive" src="public/image/slider/banner-2.jpg" alt="banner 2" /></a> </div>
-                        <div class="item"> <a href="#"><img class="img-responsive" src="public/image/slider/banner-3.jpg" alt="banner 3" /></a> </div>
+                        <?php foreach ($class_index->sliders() as $slider): ?>
+                        <div class="item">
+                            <a href="<?php echo $slider->url ?>">
+                                <img class="img-responsive" src="<?php echo $slider->image ?>" alt="<?php echo $slider->title ?>" />
+                            </a>
+                        </div>
+                        <?php endforeach; ?>
                     </div>
                     <!-- Slideshow End-->
                     <!-- Featured محصولات Start-->
@@ -496,14 +500,27 @@
                                     <div class="image"><a href="index.php?c=product&a=show&product=<?php echo $product->slug ?>"><img src="<?php echo $product->image; ?>" alt="کرم مو آقایان" title="کرم مو آقایان" class="img-responsive" /></a></div>
                                     <div class="caption">
                                         <h4><a href="index.php?c=product&a=show&product=<?php echo $product->slug ?>"><?php echo $product->name; ?></a></h4>
-                                        <p class="price"> <?php echo $product->cost ?> تومان </p>
+                                        <p class="price">
+                                            <?php
+                                                $discount = $class_product->discount($product->id);
+                                                if ($discount):
+                                            ?>
+                                                <span class="price-old"><?php echo $product->cost ?> تومان</span>
+                                                <span class="saving">-<?php echo $discount->value ?>%</span>
+                                            <?php endif; ?>
+                                            <span class="price-new"><?php echo $class_product->getcostwithDiscountAttribute($product) ?> تومان</span>
+                                        </p>
                                         <div class="rating"> <span class="fa fa-stack"><i class="fa fa-star fa-stack-2x"></i><i class="fa fa-star-o fa-stack-2x"></i></span> <span class="fa fa-stack"><i class="fa fa-star fa-stack-2x"></i><i class="fa fa-star-o fa-stack-2x"></i></span> <span class="fa fa-stack"><i class="fa fa-star fa-stack-2x"></i><i class="fa fa-star-o fa-stack-2x"></i></span> <span class="fa fa-stack"><i class="fa fa-star fa-stack-2x"></i><i class="fa fa-star-o fa-stack-2x"></i></span> <span class="fa fa-stack"><i class="fa fa-star fa-stack-2x"></i><i class="fa fa-star-o fa-stack-2x"></i></span> </div>
                                     </div>
                                     <div class="button-group">
-                                        <button class="btn-primary" type="button" onClick=""><span>افزودن به سبد</span></button>
+                                        <button class="btn-primary" type="button" onClick="addtocart('<?php echo $product->slug ?>',<?php echo $product->id ?>)"><span>افزودن به سبد</span></button>
                                         <div class="add-to-links">
-                                            <button type="button" data-toggle="tooltip" title="افزودن به علاقه مندی" onClick=""><i class="fa fa-heart"></i></button>
-                                            <button type="button" data-toggle="tooltip" title="افزودن به مقایسه" onClick=""><i class="fa fa-exchange"></i></button>
+                                            <?php if (isset($_SESSION['user_id'])): ?>
+                                                <button id="like-<?php echo $product->slug ?>" type="button" data-toggle="tooltip" title="افزودن به علاقه مندی" onClick="like('<?php echo $product->slug ?>')">
+                                                    <i class="fa fa-heart <?php if ($class_like->exists($product->id,$_SESSION['user_id'])){echo 'red';} ?>"></i>
+                                                </button>
+                                            <?php endif; ?>
+                                            <button id="comparison-<?php echo $product->slug ?>" data-toggle="tooltip" title="افزودن به مقایسه" onClick="comparison('<?php echo $product->slug ?>')"><i class="fa fa-exchange <?php if (isset($_SESSION['comparisons'])){if (array_key_exists($product->id,$_SESSION['comparisons'])){echo 'comparison';}} ?>"></i></button>
                                         </div>
                                     </div>
                                 </div>
@@ -513,14 +530,9 @@
                     <!-- دسته ها محصولات Slider End -->
                     <!-- Brand Logo Carousel Start-->
                     <div id="carousel" class="owl-carousel nxt">
-                        <div class="item text-center"> <a href="#"><img src="public/image/product/apple_logo-100x100.jpg" alt="پالم" class="img-responsive" /></a> </div>
-                        <div class="item text-center"> <a href="#"><img src="public/image/product/canon_logo-100x100.jpg" alt="سونی" class="img-responsive" /></a> </div>
-                        <div class="item text-center"> <a href="#"><img src="public/image/product/apple_logo-100x100.jpg" alt="کنون" class="img-responsive" /></a> </div>
-                        <div class="item text-center"> <a href="#"><img src="public/image/product/canon_logo-100x100.jpg" alt="اپل" class="img-responsive" /></a> </div>
-                        <div class="item text-center"> <a href="#"><img src="public/image/product/apple_logo-100x100.jpg" alt="اچ تی سی" class="img-responsive" /></a> </div>
-                        <div class="item text-center"> <a href="#"><img src="public/image/product/canon_logo-100x100.jpg" alt="اچ پی" class="img-responsive" /></a> </div>
-                        <div class="item text-center"> <a href="#"><img src="public/image/product/apple_logo-100x100.jpg" alt="brand" class="img-responsive" /></a> </div>
-                        <div class="item text-center"> <a href="#"><img src="public/image/product/canon_logo-100x100.jpg" alt="brand1" class="img-responsive" /></a> </div>
+                        <?php foreach ($brands as $brand): ?>
+                            <div class="item text-center"> <a href="#"><img src="<?php echo $brand->image ?>" width="100" alt="پالم" class="img-responsive" /></a> </div>
+                        <?php endforeach; ?>
                     </div>
                     <!-- Brand Logo Carousel End -->
                 </div>
@@ -528,3 +540,5 @@
             </div>
         </div>
     </div>
+
+<a id="btn-comparison" href="index.php?c=comparison&a=list" class="<?php if (empty($_SESSION['comparisons'])){echo 'hidden';} ?>" style="position: fixed;top:320px;margin-right: 25px;color: black;border: 1px solid black;border-radius: 10px;padding: 10px">مقایسه<?php if (isset($_SESSION['comparisons'])): echo count($_SESSION['comparisons']); endif; ?>کالا</a>

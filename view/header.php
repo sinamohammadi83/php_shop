@@ -8,18 +8,27 @@
     <title>مارکت شاپ - قالب HTML فروشگاهی</title>
     <meta name="description" content="Responsive and clean html template design for any kind of ecommerce webshop">
     <!-- CSS Part Start-->
-    <link rel="stylesheet" type="text/css" href="public/js/bootstrap/css/bootstrap.min.css" />
-    <link rel="stylesheet" type="text/css" href="public/js/bootstrap/css/bootstrap-rtl.min.css" />
-    <link rel="stylesheet" type="text/css" href="public/css/font-awesome/css/font-awesome.min.css" />
-    <link rel="stylesheet" type="text/css" href="public/css/stylesheet.css" />
-    <link rel="stylesheet" type="text/css" href="public/css/owl.carousel.css" />
-    <link rel="stylesheet" type="text/css" href="public/css/owl.transitions.css" />
-    <link rel="stylesheet" type="text/css" href="public/css/responsive.css" />
-    <link rel="stylesheet" type="text/css" href="public/css/stylesheet-rtl.css" />
-    <link rel="stylesheet" type="text/css" href="public/css/responsive-rtl.css" />
+    <link rel="stylesheet" type="text/css" href="/php_shop/public/js/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/php_shop/public/js/bootstrap/css/bootstrap-rtl.min.css" />
+    <link rel="stylesheet" type="text/css" href="/php_shop/public/css/font-awesome/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="/php_shop/public/css/stylesheet.css" />
+    <link rel="stylesheet" type="text/css" href="/php_shop/public/css/owl.carousel.css" />
+    <link rel="stylesheet" type="text/css" href="/php_shop/public/css/owl.transitions.css" />
+    <link rel="stylesheet" type="text/css" href="/php_shop/public/css/responsive.css" />
+    <link rel="stylesheet" type="text/css" href="/php_shop/public/css/stylesheet-rtl.css" />
+    <link rel="stylesheet" type="text/css" href="/php_shop/public/css/responsive-rtl.css" />
     <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Open+Sans' type='text/css'>
 
     <link rel="stylesheet" type="text/css" href="public/js/swipebox/src/css/swipebox.min.css">
+
+    <style>
+        .red{
+            color: red;
+        }
+        .comparison{
+            color: green;
+        }
+    </style>
     <!-- CSS Part End-->
 </head>
 <body>
@@ -62,8 +71,10 @@
                                         </ul>
                                     </div>
                                 </li>
-                                <li><a href="#">لیست علاقه مندی (0)</a></li>
-                                <li><a href="checkout.html">تسویه حساب</a></li>
+                                <?php if (isset($_SESSION['user_id'])): ?>
+                                    <li><a href="index.php?c=like&a=list">لیست علاقه مندی (<?php echo $count_like ?>)</a></li>
+                                    <li><a href="index.php?c=order&a=list">سفارشات</a></li>
+                                <?php endif; ?>
                             </ul>
                         </div>
                         <div id="language" class="btn-group">
@@ -111,7 +122,7 @@
                             <li>
                                 <a href="http://127.0.0.1:8000/profile">پروفایل</a>
                             </li>
-                                <?php if ($class_index->check_permission('admin-dashboard')): ?>
+                               <?php if ($class_middleware->gate('admin-dashboard')): ?>
                             <li>
                                 <a href="<?php echo $directoryAdmin->directory ?>/index.php">پنل مدیریت</a>
                             </li>
@@ -139,25 +150,30 @@
                         <div id="cart">
                             <button type="button" data-toggle="dropdown" data-loading-text="Loading..." class="heading dropdown-toggle">
                                 <span class="cart-icon pull-left flip"></span>
-                                <span id="cart-total">2 آیتم - 132000 تومان</span></button>
+                                <span id="total-items"><?php echo Cart::totalItems() ?></span>آیتم-<span id="total-amount"> <?php echo Cart::totalAmount() ?></span>تومان</button>
                             <ul class="dropdown-menu">
                                 <li>
                                     <table class="table">
-                                        <tbody>
-                                        <tr>
-                                            <td class="text-center"><a href="product.html"><img class="img-thumbnail" title="کفش راحتی مردانه" alt="کفش راحتی مردانه" src="public/image/product/sony_vaio_1-50x50.jpg"></a></td>
-                                            <td class="text-left"><a href="product.html">کفش راحتی مردانه</a></td>
-                                            <td class="text-right">x 1</td>
-                                            <td class="text-right">32000 تومان</td>
-                                            <td class="text-center"><button class="btn btn-danger btn-xs remove" title="حذف" onClick="" type="button"><i class="fa fa-times"></i></button></td>
+                                        <tbody id="cart-table-body">
+                                        <?php
+                                            if (Cart::getItems()):
+                                                foreach (Cart::getItems() as $item):
+
+                                                    $product = $item['product'] ;
+                                                    $quantity = $item['quantity'];
+                                                    $discount = $item['discount'];
+                                        ?>
+                                        <tr id="cart-<?php echo $product->id ?>">
+                                            <td class="text-center"><a href="index.php?c=product&product=<?php echo $product->slug ?>"><img width="50" class="img-thumbnail" title="<?php echo $product->name ?>" alt="<?php echo $product->name ?>" src="<?php echo $product->image ?>"></a></td>
+                                            <td class="text-left"><a href="index.php?c=product&product=<?php echo $product->slug ?>"><?php echo $product->name ?></a></td>
+                                            <td class="text-right">x <?php echo $quantity ?></td>
+                                            <td class="text-right"><?php echo $class_product->getcostwithDiscountAttribute($product) * $quantity ?> تومان</td>
+                                            <td class="text-center"><button class="btn btn-danger btn-xs remove" title="حذف" onClick="removecart(<?php echo $product->id ?>)" type="button"><i class="fa fa-times"></i></button></td>
                                         </tr>
-                                        <tr>
-                                            <td class="text-center"><a href="product.html"><img class="img-thumbnail" title="تبلت ایسر" alt="تبلت ایسر" src="public/image/product/samsung_tab_1-50x50.jpg"></a></td>
-                                            <td class="text-left"><a href="product.html">تبلت ایسر</a></td>
-                                            <td class="text-right">x 1</td>
-                                            <td class="text-right">98000 تومان</td>
-                                            <td class="text-center"><button class="btn btn-danger btn-xs remove" title="حذف" onClick="" type="button"><i class="fa fa-times"></i></button></td>
-                                        </tr>
+                                        <?php
+                                                endforeach;
+                                            endif;
+                                        ?>
                                         </tbody>
                                     </table>
                                 </li>
@@ -167,23 +183,23 @@
                                             <tbody>
                                             <tr>
                                                 <td class="text-right"><strong>جمع کل</strong></td>
-                                                <td class="text-right">132000 تومان</td>
+                                                <td class="text-right" id="all-cost"><?php echo Cart::totalAmount() ?> تومان</td>
                                             </tr>
                                             <tr>
                                                 <td class="text-right"><strong>کسر هدیه</strong></td>
-                                                <td class="text-right">4000 تومان</td>
+                                                <td class="text-right">0 تومان</td>
                                             </tr>
                                             <tr>
                                                 <td class="text-right"><strong>مالیات</strong></td>
-                                                <td class="text-right">11880 تومان</td>
+                                                <td class="text-right">0 تومان</td>
                                             </tr>
                                             <tr>
                                                 <td class="text-right"><strong>قابل پرداخت</strong></td>
-                                                <td class="text-right">139880 تومان</td>
+                                                <td class="text-right" id="all-cost1"><?php echo Cart::totalAmount() ?>  تومان</td>
                                             </tr>
                                             </tbody>
                                         </table>
-                                        <p class="checkout"><a href="cart.html" class="btn btn-primary"><i class="fa fa-shopping-cart"></i> مشاهده سبد</a>&nbsp;&nbsp;&nbsp;<a href="checkout.html" class="btn btn-primary"><i class="fa fa-share"></i> تسویه حساب</a></p>
+                                        <p class="checkout"><a href="" class="btn btn-primary"><i class="fa fa-shopping-cart"></i> مشاهده سبد</a>&nbsp;&nbsp;&nbsp;<a href="index.php?c=order&a=add" class="btn btn-primary"><i class="fa fa-share"></i>ثبت سفارش</a></p>
                                     </div>
                                 </li>
                             </ul>
@@ -212,18 +228,18 @@
                         <li class="mega-menu dropdown"><a>دسته ها</a>
                             <div class="dropdown-menu">
                                 <?php foreach ($categories as $category): ?>
-                                <div class="column col-lg-2 col-md-3"><a href="category.html"><?php echo $category->title ?></a>
+                                <div class="column col-lg-2 col-md-3"><a href="index.php?c=category&category=<?php echo $category->title ?>"><?php echo $category->title ?></a>
                                     <div>
                                         <ul>
                                             <?php foreach ($class_index->subcategories($category->id) as $subccategory): ?>
-                                            <li><a href="category.html"><?php echo $subccategory->title;if ($class_index->subcategories($subccategory->id)): ?> <span>&rsaquo;</span> <?php endif; ?></a>
+                                            <li><a href="index.php?c=category&category=<?php echo $subccategory->title ?>"><?php echo $subccategory->title;if ($class_index->subcategories($subccategory->id)): ?> <span>&rsaquo;</span> <?php endif; ?></a>
                                                 <?php
                                                     if ($class_index->subcategories($subccategory->id)):
                                                 ?>
                                                     <div class="dropdown-menu">
                                                         <ul>
                                                             <?php  foreach ($class_index->subcategories($subccategory->id) as $parent): ?>
-                                                                <li><a href="category.html"><?php echo $parent->title ?></a></li>
+                                                                <li><a href="index.php?c=category&category=<?php echo $parent->title ?>"><?php echo $parent->title ?></a></li>
                                                             <?php endforeach; ?>
                                                         </ul>
                                                     </div>
@@ -242,10 +258,10 @@
                             <div class="dropdown-menu">
                                 <?php foreach ($brands as $brand): ?>
                                 <div class="col-lg-1 col-md-2 col-sm-3 col-xs-6">
-                                    <a href="#">
+                                    <a href="index.php?c=brand&a=show&brand=<?php echo $brand->title ?>">
                                         <img width="50" src="<?php echo $brand->image ?>" title="<?php echo $brand->title ?>" alt="<?php echo $brand->title ?>" />
                                     </a>
-                                    <a href="#"><?php echo $brand->title ?></a>
+                                    <a href="index.php?c=brand&a=show&brand=<?php echo $brand->title ?>"><?php echo $brand->title ?></a>
                                 </div>
                                 <?php endforeach; ?>
                             </div>

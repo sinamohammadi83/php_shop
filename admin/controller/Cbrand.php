@@ -5,10 +5,12 @@ $class_brand=new brand();
 switch ($a)
 {
     case 'list':
+    $class_middleware->middleware('read-brand');
     $brands=$class_brand->all();
     break;
 
     case 'add':
+        $class_middleware->middleware('create-brand');
         if (isset($_POST['btn']))
         {
             $title = $_POST['title'];
@@ -19,6 +21,7 @@ switch ($a)
     break;
 
     case 'edit':
+        $class_middleware->middleware('update-brand');
         if (!isset($_GET['id']))
         {
             header('location:index.php');
@@ -40,6 +43,7 @@ switch ($a)
     break;
 
     case 'delete':
+        $class_middleware->middleware('delete-brand');
         $id=$_GET['id'];
         $brand=$class_brand->show($id);
         unlink('../'.$brand->image);

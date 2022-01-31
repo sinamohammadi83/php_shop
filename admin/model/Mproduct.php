@@ -45,5 +45,10 @@ class product{
         return $sql->fetch(PDO::FETCH_OBJ);
     }
 
+    public function discount($product)
+    {
+        $sql=$this->db->query("SELECT * FROM discounts WHERE product_id='$product'");
+        return $sql->fetch(PDO::FETCH_OBJ);
+    }
 
 }

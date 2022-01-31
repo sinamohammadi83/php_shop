@@ -7,6 +7,26 @@ class User{
         $this->db=$db;
     }
 
+    public function updatePassword($password,$user_id)
+    {
+        $this->db->query("UPDATE users SET password='$password' WHERE id='$user_id'");
+    }
+
+    public function like($user_id)
+    {
+        $sql = $this->db->query("SELECT * FROM likes WHERE user_id='$user_id'")->fetchAll(PDO::FETCH_OBJ);
+        if ($sql):
+            $i = array_column($sql,'product_id');
+            $ids = implode(',',$i);
+            return $this->db->query("SELECT * FROM products WHERE id IN ($ids)")->fetchAll(PDO::FETCH_OBJ);
+        endif;
+    }
+
+    public function order_detail($user_id)
+    {
+        return $this->db->query("SELECT * FROM order_details WHERE user_id='$user_id'")->fetchAll(PDO::FETCH_OBJ);
+    }
+
     public function login($email,$password)
     {
         $sql=$this->db->query("SELECT * FROM users WHERE email='$email' AND password='$password'");
@@ -56,6 +76,13 @@ class User{
         $sql=$this->db->query("SELECT * FROM users WHERE email='$email'");
         return $sql->fetch(PDO::FETCH_OBJ);
     }
+
+    public function showById($id)
+    {
+        $sql=$this->db->query("SELECT * FROM users WHERE id='$id'");
+        return $sql->fetch(PDO::FETCH_OBJ);
+    }
+
 
     public function checkToken($token)
     {

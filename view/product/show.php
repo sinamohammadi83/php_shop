@@ -1,4 +1,5 @@
 
+
 <div id="container">
     <div class="container">
         <!-- Breadcrumb Start-->
@@ -36,7 +37,18 @@
                                 <li><b>وضعیت موجودی :</b> <span class="instock">موجود</span></li>
                             </ul>
                             <ul class="price-box">
-                                <li class="price" itemprop="offers" itemscope itemtype="http://schema.org/Offer"><span class="price-old">12 میلیون تومان</span> <span itemprop="price">10 میلیون تومان<span itemprop="availability" content="موجود"></span></span></li>
+                                <li class="price" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+                                    <?php
+                                        if ($discount):
+                                    ?>
+                                    <span class="price-old"><?php echo $product->cost ?> میلیون تومان</span>
+                                    <?php
+                                        endif;
+                                    ?>
+                                    <span itemprop="price"><?php echo $class_product->getcostwithDiscountAttribute($product)?> میلیون تومان
+                                        <span itemprop="availability" content="موجود"></span>
+                                    </span>
+                                </li>
                                 <li></li>
                                 <li>بدون مالیات : 9 میلیون تومان</li>
                             </ul>
@@ -61,12 +73,14 @@
                                             <a class="qtyBtn mines" href="javascript:void(0);">-</a>
                                             <div class="clear"></div>
                                         </div>
-                                        <button type="button" id="button-cart" class="btn btn-primary btn-lg">افزودن به سبد</button>
+                                        <button type="button" id="button-cart" class="btn btn-primary btn-lg" onclick="addtocart('<?php echo $product->slug ?>',<?php echo $product->id ?>)">افزودن به سبد</button>
                                     </div>
                                     <div>
-                                        <button type="button" class="wishlist" onClick=""><i class="fa fa-heart"></i> افزودن به علاقه مندی ها</button>
+                                        <?php if (isset($_SESSION['user_id'])): ?>
+                                            <button id="like-<?php echo $product->slug ?>" type="button" class="wishlist" onClick="like('<?php echo $product->slug ?>')"><i class="fa fa-heart <?php if ($class_like->exists($product->id,$_SESSION['user_id'])){echo 'red';} ?>"></i> افزودن به علاقه مندی ها</button>
+                                        <?php endif; ?>
                                         <br />
-                                        <button type="button" class="wishlist" onClick=""><i class="fa fa-exchange"></i> مقایسه این محصول</button>
+                                        <button id="comparison-<?php echo $product->slug ?>" type="button" class="wishlist" onClick="comparison('<?php echo $product->slug ?>')"><i class="fa fa-exchange <?php if (isset($_SESSION['comparisons'])){if (array_key_exists($product->id,$_SESSION['comparisons'])){echo 'comparison';}} ?>"></i> مقایسه این محصول</button>
                                     </div>
                                 </div>
                             </div>
@@ -84,115 +98,103 @@
                     <ul class="nav nav-tabs">
                         <li class="active"><a href="#tab-description" data-toggle="tab">توضیحات</a></li>
                         <li><a href="#tab-specification" data-toggle="tab">مشخصات</a></li>
-                        <li><a href="#tab-review" data-toggle="tab">بررسی (2)</a></li>
+                        <li><a href="#tab-review" data-toggle="tab">بررسی (<?php echo count($class_product->comment($product->id)) ?>)</a></li>
                     </ul>
                     <div class="tab-content">
                         <div itemprop="description" id="tab-description" class="tab-pane active">
                             <div>
-                                <p><b>پردازشگر اینتل core i7</b></p>
-                                <p>مک بوک جدید با پردازشگر اینتل core i7 از همیشه سریعتر ظاهر شده و آماده است که گوی سبقت را از رقبا بگیرد.</p>
-                                <p><b>16 گیگابایت رم و هارد دیسک های بزرگتر</b></p>
-                                <p>ارائه راهکارها و شرایط سخت تایپ به پایان رسد وزمان مورد نیاز شامل حروفچینی دستاوردهای اصلی و جوابگوی سوالات پیوسته اهل دنیای موجود طراحی اساسا مورد استفاده قرار گیرد.</p>
-                                <p><b>طراحی خارق العاده و بی نظیر</b></p>
-                                <p>مک بوک در واقع ارائه راهکارها و شرایط سخت تایپ به پایان رسد وزمان مورد نیاز شامل حروفچینی دستاوردهای اصلی و جوابگوی سوالات پیوسته اهل دنیای موجود طراحی اساسا مورد استفاده قرار گیرد.</p>
-                                <p><b>با دوربین i-Sight درون ساخت</b></p>
-                                <p>بدون نیاز به ارائه راهکارها و شرایط سخت تایپ به پایان رسد وزمان مورد نیاز شامل حروفچینی دستاوردهای اصلی و جوابگوی سوالات پیوسته اهل دنیای موجود طراحی اساسا مورد استفاده قرار گیرد.</p>
+                                <p><?php echo $product->description ?></p>
                             </div>
                         </div>
                         <div id="tab-specification" class="tab-pane">
+                            <?php if ($property_groups): foreach ($property_groups as $property_group): ?>
                             <table class="table table-bordered">
                                 <thead>
                                 <tr>
-                                    <td colspan="2"><strong>حافظه</strong></td>
+                                    <td colspan="2"><strong><?php echo $property_group->title ?></strong></td>
                                 </tr>
                                 </thead>
+                                <?php foreach ($class_product->properties($property_group->id) as $property): ?>
                                 <tbody>
                                 <tr>
-                                    <td>تست 1</td>
-                                    <td>8gb</td>
+                                    <td><?php echo $property->title ?></td>
+                                    <td><?php echo $class_product->getvalueforproperty($product->id,$property->id) ?></td>
                                 </tr>
                                 </tbody>
+                                <?php endforeach; ?>
                             </table>
-                            <table class="table table-bordered">
-                                <thead>
-                                <tr>
-                                    <td colspan="2"><strong>پردازشگر</strong></td>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <td>تعداد هسته</td>
-                                    <td>1</td>
-                                </tr>
-                                </tbody>
-                            </table>
+                            <?php endforeach; endif;?>
                         </div>
                         <div id="tab-review" class="tab-pane">
-                            <form class="form-horizontal">
-                                <div id="review">
-                                    <div>
-                                        <table class="table table-striped table-bordered">
-                                            <tbody>
-                                            <tr>
-                                                <td style="width: 50%;"><strong><span>هاروی</span></strong></td>
-                                                <td class="text-right"><span>1395/1/20</span></td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="2"><p>ارائه راهکارها و شرایط سخت تایپ به پایان رسد وزمان مورد نیاز شامل حروفچینی دستاوردهای اصلی و جوابگوی سوالات پیوسته اهل دنیای موجود طراحی اساسا مورد استفاده قرار گیرد.</p>
-                                                    <div class="rating"> <span class="fa fa-stack"><i class="fa fa-star fa-stack-2x"></i><i class="fa fa-star-o fa-stack-2x"></i></span> <span class="fa fa-stack"><i class="fa fa-star fa-stack-2x"></i><i class="fa fa-star-o fa-stack-2x"></i></span> <span class="fa fa-stack"><i class="fa fa-star fa-stack-2x"></i><i class="fa fa-star-o fa-stack-2x"></i></span> <span class="fa fa-stack"><i class="fa fa-star fa-stack-2x"></i><i class="fa fa-star-o fa-stack-2x"></i></span> <span class="fa fa-stack"><i class="fa fa-star fa-stack-2x"></i><i class="fa fa-star-o fa-stack-2x"></i></span> </div></td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                        <table class="table table-striped table-bordered">
-                                            <tbody>
-                                            <tr>
-                                                <td style="width: 50%;"><strong><span>اندرسون</span></strong></td>
-                                                <td class="text-right"><span>1395/1/20</span></td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="2"><p>ارائه راهکارها و شرایط سخت تایپ به پایان رسد وزمان مورد نیاز شامل حروفچینی دستاوردهای اصلی و جوابگوی سوالات پیوسته اهل دنیای موجود طراحی اساسا مورد استفاده قرار گیرد.</p>
-                                                    <div class="rating"> <span class="fa fa-stack"><i class="fa fa-star fa-stack-2x"></i><i class="fa fa-star-o fa-stack-2x"></i></span> <span class="fa fa-stack"><i class="fa fa-star fa-stack-2x"></i><i class="fa fa-star-o fa-stack-2x"></i></span> <span class="fa fa-stack"><i class="fa fa-star fa-stack-2x"></i><i class="fa fa-star-o fa-stack-2x"></i></span> <span class="fa fa-stack"><i class="fa fa-star-o fa-stack-2x"></i></span> <span class="fa fa-stack"><i class="fa fa-star-o fa-stack-2x"></i></span> </div></td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div class="text-right"></div>
-                                </div>
+                            <form class="form-horizontal" method="post" action="index.php?c=comment&a=add&product=<?php echo $product->slug ?>">
                                 <h2>یک بررسی بنویسید</h2>
                                 <div class="form-group required">
                                     <div class="col-sm-12">
-                                        <label for="input-name" class="control-label">نام شما</label>
-                                        <input type="text" class="form-control" id="input-name" value="" name="name">
-                                    </div>
-                                </div>
-                                <div class="form-group required">
-                                    <div class="col-sm-12">
                                         <label for="input-review" class="control-label">بررسی شما</label>
-                                        <textarea class="form-control" id="input-review" rows="5" name="text"></textarea>
-                                        <div class="help-block"><span class="text-danger">توجه :</span> HTML بازگردانی نخواهد شد!</div>
+                                        <textarea class="form-control" id="input-review" rows="5" name="content"></textarea>
                                     </div>
                                 </div>
-                                <div class="form-group required">
-                                    <div class="col-sm-12">
-                                        <label class="control-label">رتبه</label>
-                                        &nbsp;&nbsp;&nbsp; بد&nbsp;
-                                        <input type="radio" value="1" name="rating">
-                                        &nbsp;
-                                        <input type="radio" value="2" name="rating">
-                                        &nbsp;
-                                        <input type="radio" value="3" name="rating">
-                                        &nbsp;
-                                        <input type="radio" value="4" name="rating">
-                                        &nbsp;
-                                        <input type="radio" value="5" name="rating">
-                                        &nbsp;خوب</div>
-                                </div>
+
                                 <div class="buttons">
                                     <div class="pull-right">
-                                        <button class="btn btn-primary" id="button-review" type="button">ادامه</button>
+                                        <button class="btn btn-primary" id="button-review" type="submit">ثبت</button>
                                     </div>
                                 </div>
                             </form>
+                            <div id="review">
+                                <div>
+                                    <?php foreach ($class_product->comment($product->id) as $comment): ?>
+                                        <table class="table table-striped table-bordered" id="comment-<?php echo $comment->id?>">
+                                            <tbody>
+                                            <tr>
+                                                <td style="width: 50%;"><strong><span><?php echo $class_user->showById($comment->user_id)->name ?></span></strong>
+                                                    <?php if (isset($_SESSION['user_id'])): if ($class_middleware->gate('delete-comment')): ?>
+                                                        <button class="btn btn-danger" title="" data-toggle="tooltip" href="" onclick="remove_comment(<?php echo $comment->id?>)" ><i class="fa fa-times"></i></button>
+                                                    <?php endif; endif;  ?>
+                                                </td>
+                                                <td class="text-right"><span> ایجاد:<?php echo date('h:i Y-m-d',strtotime($comment->created_at)); ?></span>
+                                                    <?php if ($comment->created_at!=$comment->updated_at): ?>
+                                                        <span style="">ویرایش شده:<?php echo date('h:i Y-m-d',strtotime($comment->updated_at)); ?></span>
+                                                    <?php endif;?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2"><p><?php echo $comment->content ?></p></td>
+                                            </tr>
+                                            <?php
+                                                if (isset($_SESSION['user_id'])):
+                                                    if ($class_middleware->gate('update-comment')):
+                                            ?>
+                                            <tr>
+                                                <td colspan="2">
+                                                    <form id="edit-comment-<?php echo $comment->id?>" class="form-horizontal hidden" method="post" action="index.php?c=comment&a=edit&comment=<?php echo $comment->id ?>&product=<?php echo $product->slug ?>">
+                                                        <!--<h2>یک بررسی بنویسید</h2>-->
+                                                        <div class="form-group required">
+                                                            <div class="col-sm-12">
+                                                                <label for="input-review" class="control-label">بررسی شما</label>
+                                                                <textarea class="form-control" id="input-review" rows="5" name="content"><?php echo $comment->content ?></textarea>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="buttons">
+                                                            <div class="pull-right">
+                                                                <button class="btn btn-primary" id="button-review" type="submit">ثبت</button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                    <button type="button" onclick="edit(<?php echo $comment->id?>)" id="btn-edit-<?php echo $comment->id ?>" class="btn btn-secondary">ویرایش</button>
+                                                </td>
+                                            </tr>
+                                            <?php
+                                                    endif;
+                                                endif;
+                                            ?>
+                                            </tbody>
+                                        </table>
+                                    <?php endforeach; ?>
+                                </div>
+                                <div class="text-right"></div>
+                            </div>
                         </div>
                     </div>
                     <h3 class="subtitle">محصولات مرتبط</h3>
@@ -388,3 +390,48 @@
         </div>
     </div>
 </div>
+
+
+
+<a id="btn-comparison" href="index.php?c=comparison&a=list" class="<?php if (empty($_SESSION['comparisons'])){echo 'hidden';} ?>" style="position: fixed;top:320px;margin-right: 25px;color: black;border: 1px solid black;border-radius: 10px;padding: 10px">مشاهده مقایسه</a>
+<?php
+    if (isset($_SESSION['user_id'])):
+        if ($class_middleware->gate('update-comment')):
+?>
+<script>
+    function edit(id){
+        let edit_comment = $('#edit-comment-'+id)
+        let btn_edit_comment = $('#btn-edit-'+id)
+        if (edit_comment.hasClass('hidden'))
+        {
+            btn_edit_comment.text('بستن')
+            edit_comment.removeClass('hidden')
+        }else{
+            btn_edit_comment.text('ویرایش')
+            edit_comment.addClass('hidden')
+        }
+    }
+</script>
+<?php
+
+        if ($class_middleware->gate('delete-comment')):
+?>
+<script>
+    function remove_comment(comment)
+    {
+        $.ajax({
+            url:'index.php?c=comment&a=delete&response=true',
+            method:'post',
+            data : {
+                comment : comment
+            },
+            success : () => {
+                $('#comment-'+comment).remove()
+            }
+        })
+    }
+</script>
+<?php
+        endif;
+    endif;
+endif;

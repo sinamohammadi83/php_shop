@@ -102,7 +102,8 @@ Video Side Block Start
 </div>
 Video Side Block End
 Custom Side Block Start
-<div id="custom_side_block" class="custom_side_block_left sort-order-4">
+-->
+<!--<div id="custom_side_block" class="custom_side_block_left sort-order-4">
     <div class="custom_side_block_icon"> <i class="fa fa-chevron-right"></i> </div>
     <table>
         <tbody>
@@ -120,8 +121,8 @@ Custom Side Block Start
         </tr>
         </tbody>
     </table>
-</div>
-Custom Side Block End -->
+</div>-->
+<!--Custom Side Block End -->
 </div>
 <!-- JS Part Start-->
 <script type="text/javascript" src="public/js/jquery-2.1.1.min.js"></script>
@@ -131,6 +132,8 @@ Custom Side Block End -->
 <script type="text/javascript" src="public/js/owl.carousel.min.js"></script>
 <script type="text/javascript" src="public/js/custom.js"></script>
 
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
 <script type="text/javascript" src="public/js/jquery.elevateZoom-3.0.8.min.js"></script>
 <script type="text/javascript" src="public/js/swipebox/lib/ios-orientationchange-fix.js"></script>
@@ -155,6 +158,125 @@ Custom Side Block End -->
         $.swipebox(ez.getGalleryList());
         return false;
     });
+</script>
+
+
+<script>
+    function like(slug)
+    {
+        $.ajax({
+            method:'post',
+            url:'index.php?c=like&a=add&response=true',
+            data : {
+                product : slug
+            },
+            success : () => {
+                let like = $('#like-'+slug+'>.fa-heart')
+                if (!like.hasClass('red'))
+                {
+                    like.addClass('red')
+                }else {
+                    like.removeClass('red')
+                }
+
+            }
+        })
+    }
+
+    function comparison(product)
+    {
+        $.ajax({
+            method:'post',
+            url:'index.php?c=comparison&a=add&response=true',
+            data : {
+                product : product
+            },
+            success : (data) => {
+                console.log(data)
+                let compareison_btn = $('#comparison-'+product+'>.fa-exchange')
+                let btn_compare = $('#btn-comparison')
+                let btn_compare1 = document.getElementById('btn-comparison')
+
+                console.log(compareison_btn)
+                if (compareison_btn.hasClass('comparison'))
+                {
+                    compareison_btn.removeClass('comparison')
+                } else {
+                    compareison_btn.addClass('comparison')
+                }
+                if (data>0)
+                {
+                    btn_compare.removeClass('hidden')
+                    btn_compare1.innerHTML = 'مقایسه'+data+'کالا'
+                }else {
+                    btn_compare.addClass('hidden')
+                }
+            },
+            error:  (e) => { // error callback
+                swal({
+                    title:'خطا',
+                    text:e.responseText,
+                    icon:'error',
+                    button:'باشه'
+                })
+            }
+        })
+
+
+    }
+
+    function addtocart(slug,productID){
+        if ($('#input-quantity').length)
+        {
+            var quantity = $('#input-quantity').val()
+        }else {
+            var quantity = 1
+        }
+        $.ajax({
+            method:'post',
+            url:'index.php?c=cart&a=add&response=true',
+            data : {
+                product : slug,
+                quantity : quantity
+            },
+            success : (data) => {
+                let quantity = data.cart[productID]['quantity'];
+                let product = data.cart[productID]['product'];
+                let discount = data.cart[productID]['discount'];
+                let total_items = data.cart.total_items
+                let total_amount = data.cart.total_amount
+                $('#total-amount').text(total_amount)
+                $('#total-items').text(total_items)
+                $('#cart-' + productID).remove()
+                $('#cart-table-body:last-child').append('<tr id="cart-'+product.id+'">'
+                    +'<td class="text-center"><a href="product.html"><img width="50" class="img-thumbnail" title="کفش راحتی مردانه" alt="کفش راحتی مردانه" src="'+product.image+'"></a></td>'
+                    +'<td class="text-left"><a href="product.html">'+product.name+'</a></td>'
+                    +'<td class="text-right">x '+quantity+'</td>'
+                    +'<td class="text-right">'+discount+' تومان</td>'
+                    +'<td class="text-center"><button class="btn btn-danger btn-xs remove" title="حذف" onClick="removecart('+product.id+')" type="button"><i class="fa fa-times"></i></button></td>'
+                    +'</tr>')
+                $('#all-cost').text(data.cart.total_amount+'نومان')
+                $('#all-cost1').text(data.cart.total_amount+'نومان')
+            }
+        })
+    }
+
+    function removecart(product){
+        $.ajax({
+            method:'post',
+            url:'index.php?c=cart&a=delete&response=true',
+            data : {
+                product : product
+            },
+            success : (data) => {
+                $('#total-amount').text(data.cart.total_amount)
+                $('#total-items').text(data.cart.total_items)
+                $('#cart-'+product).remove()
+                $('#all-cost').text(data.cart.total_amount+'نومان')
+                $('#all-cost1').text(data.cart.total_amount+'نومان')
+            }
+        })
+    }
 </script>
 <!-- JS Part End-->
 </body>

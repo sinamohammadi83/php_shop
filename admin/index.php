@@ -1,5 +1,11 @@
 <?php
+    date_default_timezone_set("Asia/Tehran");
     $queryString = $_SERVER['QUERY_STRING'];
+    include_once '../public/include/db.php';
+    include_once '../Middleware/CheckPermissionMiddleware.php';
+    $class_middleware = new CheckPermissionMiddleware();
+    $class_middleware->middleware_auth();
+    $class_middleware->middleware('admin-dashboard');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -430,62 +436,202 @@
                 </li>
                 <li class="header nav-small-cap"><i class="mdi mdi-drag-horizontal mr-5"></i>PERSONAL</li>
 
-                <li class="treeview <?php if ($queryString == 'c=category&a=add' || $queryString == 'c=category&a=list') { echo 'active';} ?>">
-                    <a href="#">
-                        <i class="mdi mdi-apps"></i>
-                        <span>دسته بندی</span>
-                        <span class="pull-right-container">
-                            <i class="fa fa-angle-right pull-right"></i>
-                        </span>
-                    </a>
-                    <ul class="treeview-menu">
-                        <li class="<?php if ($queryString == 'c=category&a=add') { echo 'active';} ?>"><a href="index.php?c=category&a=add"><i class="mdi mdi-toggle-switch-off"></i>ایجاد</a></li>
-                        <li class="<?php if ($queryString == 'c=category&a=list') { echo 'active';} ?>"><a href="index.php?c=category&a=list"><i class="mdi mdi-toggle-switch-off"></i>لیست</a></li>
-                    </ul>
-                </li>
+                <?php if ($class_middleware->gate('read-category') || $class_middleware->gate('create-category')): ?>
+                    <li class="treeview <?php if ($queryString == 'c=category&a=add' || $queryString == 'c=category&a=list') { echo 'active';} ?>">
+                        <a href="#">
+                            <i class="mdi mdi-apps"></i>
+                            <span>دسته بندی</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-right pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <?php if ($class_middleware->gate('create-category')): ?>
+                                <li class="<?php if ($queryString == 'c=category&a=add') { echo 'active';} ?>"><a href="index.php?c=category&a=add"><i class="mdi mdi-toggle-switch-off"></i>ایجاد</a></li>
+                            <?php endif; ?>
+                            <?php if ($class_middleware->gate('read-category')): ?>
+                                <li class="<?php if ($queryString == 'c=category&a=list') { echo 'active';} ?>"><a href="index.php?c=category&a=list"><i class="mdi mdi-toggle-switch-off"></i>لیست</a></li>
+                            <?php endif; ?>
+                        </ul>
+                    </li>
+                <?php endif; ?>
 
-                <li class="treeview <?php if ($queryString == 'c=brand&a=add' || $queryString == 'c=brand&a=list') { echo 'active';} ?>">
-                    <a href="#">
-                        <i class="mdi mdi-apps"></i>
-                        <span>برند</span>
-                        <span class="pull-right-container">
-                            <i class="fa fa-angle-right pull-right"></i>
-                        </span>
-                    </a>
-                    <ul class="treeview-menu">
-                        <li class="<?php if ($queryString == 'c=brand&a=add') { echo 'active';} ?>"><a href="index.php?c=brand&a=add"><i class="mdi mdi-toggle-switch-off"></i>ایجاد</a></li>
-                        <li class="<?php if ($queryString == 'c=brand&a=list') { echo 'active';} ?>"><a href="index.php?c=brand&a=list"><i class="mdi mdi-toggle-switch-off"></i>لیست</a></li>
-                    </ul>
-                </li>
+                <?php if ($class_middleware->gate('read-brand') || $class_middleware->gate('create-brand')): ?>
+                    <li class="treeview <?php if ($queryString == 'c=brand&a=add' || $queryString == 'c=brand&a=list') { echo 'active';} ?>">
+                        <a href="#">
+                            <i class="mdi mdi-apps"></i>
+                            <span>برند</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-right pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <?php if ($class_middleware->gate('create-brand')): ?>
+                                <li class="<?php if ($queryString == 'c=brand&a=add') { echo 'active';} ?>"><a href="index.php?c=brand&a=add"><i class="mdi mdi-toggle-switch-off"></i>ایجاد</a></li>
+                            <?php endif; ?>
+                            <?php if ($class_middleware->gate('read-brand')): ?>
+                                <li class="<?php if ($queryString == 'c=brand&a=list') { echo 'active';} ?>"><a href="index.php?c=brand&a=list"><i class="mdi mdi-toggle-switch-off"></i>لیست</a></li>
+                            <?php endif; ?>
+                        </ul>
+                    </li>
+                <?php endif; ?>
 
-                <li class="treeview <?php if ($queryString == 'c=setting&a=admin' || $queryString == 'c=setting&a=user' || $queryString == 'c=setting&a=site') { echo 'active';} ?>">
-                    <a href="#">
-                        <i class="mdi mdi-apps"></i>
-                        <span>تنظیمات</span>
-                        <span class="pull-right-container">
-                            <i class="fa fa-angle-right pull-right"></i>
-                        </span>
-                    </a>
-                    <ul class="treeview-menu">
-                        <li class="<?php if ($queryString == 'c=setting&a=admin') { echo 'active';} ?>"><a href="index.php?c=setting&a=admin"><i class="mdi mdi-toggle-switch-off"></i>پنل ادمین</a></li>
-                        <li><a href="index.php?c=setting&a=user"><i class="mdi mdi-toggle-switch-off"></i>پنل کاربر</a></li>
-                        <li><a href="index.php?c=setting&a=site"><i class="mdi mdi-toggle-switch-off"></i>سایت</a></li>
-                    </ul>
-                </li>
+                <?php if($class_middleware->gate('update-settingadmin') || $class_middleware->gate('update-settinguser') || $class_middleware->gate('update-settingsite')): ?>
+                    <li class="treeview <?php if ($queryString == 'c=setting&a=admin' || $queryString == 'c=setting&a=user' || $queryString == 'c=setting&a=site') { echo 'active';} ?>">
+                        <a href="#">
+                            <i class="mdi mdi-apps"></i>
+                            <span>تنظیمات</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-right pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li class="<?php if ($queryString == 'c=setting&a=admin') { echo 'active';} ?>"><a href="index.php?c=setting&a=admin"><i class="mdi mdi-toggle-switch-off"></i>پنل ادمین</a></li>
+                            <li><a href="index.php?c=setting&a=user"><i class="mdi mdi-toggle-switch-off"></i>پنل کاربر</a></li>
+                            <li><a href="index.php?c=setting&a=site"><i class="mdi mdi-toggle-switch-off"></i>سایت</a></li>
+                        </ul>
+                    </li>
+                <?php endif; ?>
 
-                <li class="treeview <?php if ($queryString == 'c=product&a=add' || $queryString == 'c=product&a=list') { echo 'active';} ?>">
-                    <a href="#">
-                        <i class="mdi mdi-apps"></i>
-                        <span>محصول</span>
-                        <span class="pull-right-container">
+                <?php if ($class_middleware->gate('read-product') || $class_middleware->gate('create-product')): ?>
+                    <li class="treeview <?php if ($queryString == 'c=product&a=add' || $queryString == 'c=product&a=list') { echo 'active';} ?>">
+                        <a href="#">
+                            <i class="mdi mdi-apps"></i>
+                            <span>محصول</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-right pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <?php if ($class_middleware->gate('create-product')): ?>
+                            <li class="<?php if ($queryString == 'c=product&a=add') { echo 'active';} ?>"><a href="index.php?c=product&a=add"><i class="mdi mdi-toggle-switch-off"></i>ایجاد</a></li>
+                            <?php endif; ?>
+                            <?php if ($class_middleware->gate('read-product')): ?>
+                            <li class="<?php if ($queryString == 'c=product&a=list') { echo 'active';} ?>"><a href="index.php?c=product&a=list"><i class="mdi mdi-toggle-switch-off"></i>لیست</a></li>
+                            <?php endif; ?>
+                        </ul>
+                    </li>
+                <?php endif; ?>
+
+                <?php if ($class_middleware->gate('read-role') || $class_middleware->gate('create-role')): ?>
+                    <li class="treeview <?php if ($queryString == 'c=role&a=add' || $queryString == 'c=role&a=list') { echo 'active';} ?>">
+                        <a href="#">
+                            <i class="mdi mdi-apps"></i>
+                            <span>نقش</span>
+                            <span class="pull-right-container">
                             <i class="fa fa-angle-right pull-right"></i>
                         </span>
-                    </a>
-                    <ul class="treeview-menu">
-                        <li class="<?php if ($queryString == 'c=product&a=add') { echo 'active';} ?>"><a href="index.php?c=product&a=add"><i class="mdi mdi-toggle-switch-off"></i>ایجاد</a></li>
-                        <li class="<?php if ($queryString == 'c=product&a=list') { echo 'active';} ?>"><a href="index.php?c=product&a=list"><i class="mdi mdi-toggle-switch-off"></i>لیست</a></li>
-                    </ul>
-                </li>
+                        </a>
+                        <ul class="treeview-menu">
+                            <?php if ($class_middleware->gate('create-role')): ?>
+                                <li class="<?php if ($queryString == 'c=role&a=add') { echo 'active';} ?>"><a href="index.php?c=role&a=add"><i class="mdi mdi-toggle-switch-off"></i>ایجاد</a></li>
+                            <?php endif; ?>
+                            <?php if ($class_middleware->gate('read-role')): ?>
+                                <li class="<?php if ($queryString == 'c=role&a=list') { echo 'active';} ?>"><a href="index.php?c=role&a=list"><i class="mdi mdi-toggle-switch-off"></i>لیست</a></li>
+                            <?php endif; ?>
+                        </ul>
+                    </li>
+                <?php endif; ?>
+
+                <?php if ($class_middleware->gate('read-user') || $class_middleware->gate('create-user')): ?>
+                    <li class="treeview <?php if ($queryString == 'c=user&a=add' || $queryString == 'c=user&a=list') { echo 'active';} ?>">
+                        <a href="#">
+                            <i class="mdi mdi-apps"></i>
+                            <span>کاربر</span>
+                            <span class="pull-right-container">
+                            <i class="fa fa-angle-right pull-right"></i>
+                        </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <?php if ($class_middleware->gate('create-user')): ?>
+                                <li class="<?php if ($queryString == 'c=user&a=add') { echo 'active';} ?>"><a href="index.php?c=user&a=add"><i class="mdi mdi-toggle-switch-off"></i>ایجاد</a></li>
+                            <?php endif; ?>
+                            <?php if ($class_middleware->gate('read-user')): ?>
+                                <li class="<?php if ($queryString == 'c=user&a=list') { echo 'active';} ?>"><a href="index.php?c=user&a=list"><i class="mdi mdi-toggle-switch-off"></i>لیست</a></li>
+                            <?php endif; ?>
+                        </ul>
+                    </li>
+                <?php endif; ?>
+
+                <?php if ($class_middleware->gate('read-slider') || $class_middleware->gate('create-slider')): ?>
+                    <li class="treeview <?php if ($queryString == 'c=slider&a=add' || $queryString == 'c=slider&a=list') { echo 'active';} ?>">
+                        <a href="#">
+                            <i class="mdi mdi-apps"></i>
+                            <span>اسلایدر</span>
+                            <span class="pull-right-container">
+                            <i class="fa fa-angle-right pull-right"></i>
+                        </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <?php if ($class_middleware->gate('create-slider')): ?>
+                                <li class="<?php if ($queryString == 'c=slider&a=add') { echo 'active';} ?>"><a href="index.php?c=slider&a=add"><i class="mdi mdi-toggle-switch-off"></i>ایجاد</a></li>
+                            <?php endif; ?>
+                            <?php if ($class_middleware->gate('read-slider')): ?>
+                                <li class="<?php if ($queryString == 'c=slider&a=list') { echo 'active';} ?>"><a href="index.php?c=slider&a=list"><i class="mdi mdi-toggle-switch-off"></i>لیست</a></li>
+                            <?php endif; ?>
+                        </ul>
+                    </li>
+                <?php endif; ?>
+
+                <?php if ($class_middleware->gate('read-property_group') || $class_middleware->gate('create-property_group')): ?>
+                    <li class="treeview <?php if ($queryString == 'c=propertyGroup&a=add' || $queryString == 'c=propertyGroup&a=list') { echo 'active';} ?>">
+                        <a href="#">
+                            <i class="mdi mdi-apps"></i>
+                            <span>گروه مشخصات</span>
+                            <span class="pull-right-container">
+                            <i class="fa fa-angle-right pull-right"></i>
+                        </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <?php if ($class_middleware->gate('create-property_group')): ?>
+                                <li class="<?php if ($queryString == 'c=propertyGroup&a=add') { echo 'active';} ?>"><a href="index.php?c=propertyGroup&a=add"><i class="mdi mdi-toggle-switch-off"></i>ایجاد</a></li>
+                            <?php endif; ?>
+                            <?php if ($class_middleware->gate('read-property_group')): ?>
+                                <li class="<?php if ($queryString == 'c=propertyGroup&a=list') { echo 'active';} ?>"><a href="index.php?c=propertyGroup&a=list"><i class="mdi mdi-toggle-switch-off"></i>لیست</a></li>
+                            <?php endif; ?>
+                        </ul>
+                    </li>
+                <?php endif; ?>
+
+                <?php if ($class_middleware->gate('read-property') || $class_middleware->gate('create-property')): ?>
+                    <li class="treeview <?php if ($queryString == 'c=property&a=add' || $queryString == 'c=property&a=list') { echo 'active';} ?>">
+                        <a href="#">
+                            <i class="mdi mdi-apps"></i>
+                            <span>مشخصات</span>
+                            <span class="pull-right-container">
+                            <i class="fa fa-angle-right pull-right"></i>
+                        </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <?php if ($class_middleware->gate('create-property')): ?>
+                                <li class="<?php if ($queryString == 'c=property&a=add') { echo 'active';} ?>"><a href="index.php?c=property&a=add"><i class="mdi mdi-toggle-switch-off"></i>ایجاد</a></li>
+                            <?php endif; ?>
+                            <?php if ($class_middleware->gate('read-property')): ?>
+                                <li class="<?php if ($queryString == 'c=property&a=list') { echo 'active';} ?>"><a href="index.php?c=property&a=list"><i class="mdi mdi-toggle-switch-off"></i>لیست</a></li>
+                            <?php endif; ?>
+                        </ul>
+                    </li>
+                <?php endif; ?>
+
+                <?php if ($class_middleware->gate('read-offer') || $class_middleware->gate('create-offer')): ?>
+                    <li class="treeview <?php if ($queryString == 'c=offer&a=add' || $queryString == 'c=offer&a=list') { echo 'active';} ?>">
+                        <a href="#">
+                            <i class="mdi mdi-apps"></i>
+                            <span>تخفیف</span>
+                            <span class="pull-right-container">
+                            <i class="fa fa-angle-right pull-right"></i>
+                        </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <?php if ($class_middleware->gate('create-offer')): ?>
+                                <li class="<?php if ($queryString == 'c=offer&a=add') { echo 'active';} ?>"><a href="index.php?c=offer&a=add"><i class="mdi mdi-toggle-switch-off"></i>ایجاد</a></li>
+                            <?php endif; ?>
+                            <?php if ($class_middleware->gate('read-offer')): ?>
+                                <li class="<?php if ($queryString == 'c=offer&a=list') { echo 'active';} ?>"><a href="index.php?c=offer&a=list"><i class="mdi mdi-toggle-switch-off"></i>لیست</a></li>
+                            <?php endif; ?>
+                        </ul>
+                    </li>
+                <?php endif; ?>
 
                 <li>
                     <a href="pages/auth_login.html">
@@ -503,13 +649,16 @@
         <!-- Content Header (Page header) -->
         <div class="content-header">
             <?php
+            function dd($value)
+            {
+                var_dump($value);die();
+            }
             function delete_image($image)
             {
                  unlink('../'.$image);
             }
             function uploder($image,$Directory,$rand=false)
             {
-
                 if (!is_dir('../public/uploads/'.$Directory.'/'))
                 {
                     mkdir('../public/uploads/'.$Directory.'/');
@@ -538,7 +687,7 @@
                 move_uploaded_file($tmp,$baseaddress);
                 return $returnadd;
             }
-            include_once '../public/include/db.php';
+
             @$c=$_GET['c']?$_GET['c']:'index';
             @$a=$_GET['a']?$_GET['a']:'index';
             if (file_exists("controller/C$c.php"))

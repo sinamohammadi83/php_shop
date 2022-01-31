@@ -29,7 +29,7 @@
                             <label class="control-label" for="input-password">رمز عبور</label>
                             <input type="password" name="password" value="" placeholder="رمز عبور" id="input-password" class="form-control" />
                             <br />
-                            <a href="#">فراموشی رمز عبور</a></div>
+                            <a href="index.php?c=password&a=add">فراموشی رمز عبور</a></div>
                         <input type="submit" value="ورود" name="btn-login" class="btn btn-primary" />
                             <?php
                                 if (isset($_GET['login']))
