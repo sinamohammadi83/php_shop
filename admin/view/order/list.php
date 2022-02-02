@@ -13,6 +13,7 @@
                     <table id="example5" class="table table-bordered table-striped" style="width:100%">
                         <thead>
                         <tr>
+                            <th>#</th>
                             <th>نام</th>
                             <th>عکس</th>
                             <th>ایمیل</th>
@@ -36,6 +37,7 @@
                             $product = $class_product->show($order->product_id);
                             ?>
                             <tr>
+                            <td><?php echo $order->id ?></td>
                             <td><?php echo $user->name ?></td>
                             <td><img src="../<?php echo $user->image ?>" width="200" alt="<?php echo $user->name ?>"/></td>
                             <td><?php echo $user->email ?></td>
@@ -75,6 +77,7 @@
                         </tbody>
                         <tfoot>
                         <tr>
+                            <th>#</th>
                             <th>نام</th>
                             <th>عکس</th>
                             <th>ایمیل</th>
