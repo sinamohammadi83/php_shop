@@ -51,4 +51,13 @@ class product{
         return $sql->fetch(PDO::FETCH_OBJ);
     }
 
+    public function getcostwithDiscountAttribute($product)
+    {
+        if (!$this->discount($product->id)){
+            return $product->cost;
+        }else{
+            return $product->cost - $product->cost * $this->discount($product->id)->value / 100;
+        }
+    }
+
 }

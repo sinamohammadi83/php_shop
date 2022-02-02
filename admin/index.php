@@ -6,6 +6,7 @@
     $class_middleware = new CheckPermissionMiddleware();
     $class_middleware->middleware_auth();
     $class_middleware->middleware('admin-dashboard');
+    if (!isset($_GET['response'])):
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -633,6 +634,23 @@
                     </li>
                 <?php endif; ?>
 
+                <?php /*if ($class_middleware->gate('read-offer') || $class_middleware->gate('create-offer')): */?>
+                    <li class="treeview <?php if ($queryString == 'c=order&a=list') { echo 'active';} ?>">
+                        <a href="#">
+                            <i class="mdi mdi-apps"></i>
+                            <span>سفارش</span>
+                            <span class="pull-right-container">
+                            <i class="fa fa-angle-right pull-right"></i>
+                        </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <?php /*if ($class_middleware->gate('create-offer')): */?>
+                                <li class="<?php if ($queryString == 'c=order&a=list') { echo 'active';} ?>"><a href="index.php?c=order&a=list"><i class="mdi mdi-toggle-switch-off"></i>لیست</a></li>
+                            <?php /*endif; */?>
+                        </ul>
+                    </li>
+                <?php /*endif; */?>
+
                 <li>
                     <a href="pages/auth_login.html">
                         <i class="mdi mdi-directions"></i>
@@ -649,6 +667,7 @@
         <!-- Content Header (Page header) -->
         <div class="content-header">
             <?php
+            endif;
             function dd($value)
             {
                 var_dump($value);die();
@@ -694,6 +713,7 @@
             {
                 include_once "controller/C$c.php";
             }
+            if (!isset($_GET['response'])):
             ?>
         </div>
 
@@ -953,3 +973,5 @@
 
 </body>
 </html>
+<?php
+    endif;
