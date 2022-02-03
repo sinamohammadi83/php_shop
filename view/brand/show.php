@@ -351,7 +351,7 @@
                                         <?php if (isset($_SESSION['user_id'])): ?>
                                             <button id="like-<?php echo $product->slug ?>" type="button" data-toggle="tooltip" title="افزودن به علاقه مندی ها" onClick="like('<?php echo $product->slug ?>')"><i class="fa fa-heart <?php if ($class_like->exists($product->id,$_SESSION['user_id'])){echo 'red';} ?>"></i> <span>افزودن به علاقه مندی ها</span></button>
                                         <?php endif; ?>
-                                        <button type="button" data-toggle="tooltip" title="مقایسه این محصول" onClick=""><i class="fa fa-exchange"></i> <span>مقایسه این محصول</span></button>
+                                        <button id="comparison-<?php echo $product->slug ?>" type="button" data-toggle="tooltip" title="مقایسه این محصول" onClick="comparison('<?php echo $product->slug ?>')"><i class="fa fa-exchange <?php if (isset($_SESSION['comparisons'])){if (array_key_exists($product->id,$_SESSION['comparisons'])){echo 'comparison';}} ?>"></i> <span>مقایسه این محصول</span></button>
                                     </div>
                                 </div>
                             </div>

@@ -106,54 +106,6 @@
 </div>
 <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
 <script>
-/*    $.ajax({
-        url:'http://localhost/php_shop/admin/index.php?c=order&a=list&response=true',
-        method:'post',
-        success : (response) => {
-            const orders = response.data.orders
-            let tabel = $('#tabel')
-            let value_status = ''
-            let class_status = ''
-            for (order of orders){
-                switch(order.status){
-                    case 'OK':{
-                        value_status='در حال برسی'
-                        class_status = 'btn btn-sm btn-warning'
-                        status=1
-                        break
-                    }
-                    case 'pending':{
-                        value_status='آماده برای ارسال'
-                        class_status = 'btn btn-sm btn-primary'
-                        status=2
-                        break
-                    }
-                    case 'ready':{
-                        value_status='ارسال شده'
-                        class_status = 'btn btn-sm btn-info'
-                        status=3
-                        break
-                    }
-                }
-                tabel.append('<tr>'
-                +'<td>'+order.user.name+'</td>'
-                +'<td><img src="../'+order.user.image+'" width="200" alt="'+order.user.name+'"/></td>'
-                +'<td>'+order.user.email+'</td>'
-                +'<td>'+order.address+'</td>'
-                +'<td>'+order.product.name+'</td>'
-                +'<td><img src="../'+order.product.image+'" width="100" alt="'+order.product.name+'"/></td>'
-                +'<td>'+order.product.cost_with_discount+'</td>'
-                +'<td>'+order.product.brand.title+'</td>'
-                +'<td>'+order.product.category.title+'</td>'
-                +'<td> <a class="btn btn-warning btn-sm" href="../index.php?c=product&product='+order.product.slug+'">مشاهده</a> </td>'
-                +'<td>'+order.count+'</td>'
-                +'<td>'+order.unit_amount+'</td>'
-                +'<td>'+order.total_amount+'</td>'
-                +'<td><button class="'+class_status+'" onclick="update('+order.id+','+status+')">'+value_status+'</button> </td>'
-                +'</tr>')
-            }
-        }
-    })*/
     function update(order_id,status_id){
         let new_status = ''
         switch (status_id){
