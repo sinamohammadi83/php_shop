@@ -17,9 +17,9 @@ switch ($a){
             $name = $_POST['name'];
             $email = $_POST['email'];
             $image = uploder($_FILES['image'],'users',true);
-            $password = $_POST['password']
+            $password = $_POST['password'];
             $repassword = $_POST['repassword'];
-            $role_id = $_POST['role_id']
+            $role_id = $_POST['role_id'];
             $class_user->store($name,$email,$image,$role_id,md5($password));
             header('location:index.php?c=user&a=list');
         }
@@ -34,15 +34,14 @@ switch ($a){
             $name = $_POST['name'];
             $email = $_POST['email'];
             $role_id = $_POST['role_id'];
-
-            if ($_POST['password'])
+            if ($_POST['password']!='')
             {
                 $password = $_POST['password'];
                 $repassword = $_POST['repassword'];
             }else{
                 $password = $user->password;
             }
-
+            
             if ($_FILES['image']['name'])
             {
                 delete_image($user->image);
