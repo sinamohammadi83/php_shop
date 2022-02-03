@@ -39,7 +39,7 @@
                         <input type="password" name="repassword" class="form-control">
                     </div>
                     <div class="form-group">
-                        <input type="submit" value="بروزرسانی" class="btn btn-info" name="btn">
+                        <input type="submit" value="ثبت" class="btn btn-info" name="btn">
                     </div>
                 </form>
             </div>

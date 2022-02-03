@@ -12,6 +12,17 @@ switch ($a){
     case 'add':
         $class_middleware->middleware('create-user');
         $roles = $class_role->all();
+        if(isset($_POST['btn']))
+        {
+            $name = $_POST['name'];
+            $email = $_POST['email'];
+            $image = uploder($_FILES['image'],'users',true);
+            $password = $_POST['password']
+            $repassword = $_POST['repassword'];
+            $role_id = $_POST['role_id']
+            $class_user->store($name,$email,$image,$role_id,md5($password));
+            header('location:index.php?c=user&a=list');
+        }
     break;
     case 'edit':
         $class_middleware->middleware('update-user');
