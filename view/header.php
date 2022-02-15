@@ -120,7 +120,7 @@
                                 </form>
                             </li>
                             <li>
-                                <a href="http://127.0.0.1:8000/profile">پروفایل</a>
+                                <a href="index.php?c=profile&a=profile">پروفایل</a>
                             </li>
                                <?php if ($class_middleware->gate('admin-dashboard')): ?>
                             <li>

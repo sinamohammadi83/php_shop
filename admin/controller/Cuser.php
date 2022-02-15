@@ -41,7 +41,7 @@ switch ($a){
             }else{
                 $password = $user->password;
             }
-            
+
             if ($_FILES['image']['name'])
             {
                 delete_image($user->image);

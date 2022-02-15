@@ -90,5 +90,14 @@ class User{
         return $sql->fetch(PDO::FETCH_OBJ);
     }
 
+    public function updateProfile($name,$email,$id)
+    {
+        $this->db->query("UPDATE users SET name='$name' , email='$email' WHERE id='$id'");
+    }
+
+    public function updateImage($image,$id)
+    {
+        $this->db->query("UPDATE users SET image='$image' WHERE id='$id'");
+    }
 
 }
